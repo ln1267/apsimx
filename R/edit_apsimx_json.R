@@ -602,7 +602,7 @@ edit_apsimx <- function(file, src.dir = ".", wrt.dir = NULL,
     if(length(operations.node) > 1)
       stop("Not ready to handle multiple 'Operations'", call. = FALSE)
     
-    if(is.null(operations.node[[1]]$Operation))
+    if(is.null(operations.node[[1]]$OperationsList))
       stop("'Operation' child node not found", call. = FALSE)
     
     ## Here the assumption is that 'parm' is a line and a component to edit
@@ -614,34 +614,34 @@ edit_apsimx <- function(file, src.dir = ".", wrt.dir = NULL,
         stop("lenght of the first 'parm' element should be equal to the length of 'value'", call. = FALSE)      
     }
 
-    length.operation <- length(operations.node[[1]]$Operation)
+    length.operation <- length(operations.node[[1]]$OperationsList)
     
     if(all(parm[[1]] > 0)){
       if(parm[[2]] == "Date"){
         for(i in seq_along(value)){
-          date.exists <- try(operations.node[[1]]$Operation[[parm[[1]][i]]]$Date, silent = TRUE)
+          date.exists <- try(operations.node[[1]]$OperationsList[[parm[[1]][i]]]$Date, silent = TRUE)
           if(!inherits(date.exists, 'try-error')){
-            operations.node[[1]]$Operation[[parm[[1]][i]]]$Date <- value[i]      
+            operations.node[[1]]$OperationsList[[parm[[1]][i]]]$Date <- value[i]      
           }else{
             ## Need to add Date if not present 
             ##stop("Adding a row is not available yet", call. = FALSE)
             if(verbose) cat("Added a new 'Date' element in position", parm[[1]][i], "\n")
             input.list <- vector("list", length = 1) ## Create empty list
-            list.elements <- operations.node[[1]]$Operation[[1]] ## Copying the first one
+            list.elements <- operations.node[[1]]$OperationsList[[1]] ## Copying the first one
             list.elements$Date <- value[i] ## replacing Date
             list.elements$Action <- "" 
             list.elements$Line <- ""
             input.list[[1]] <- list.elements
-            operations.node[[1]]$Operation <- append(operations.node[[1]]$Operation, input.list) 
+            operations.node[[1]]$OperationsList <- append(operations.node[[1]]$OperationsList, input.list) 
           }
         }
       }
       
       if(parm[[2]] == "Action"){
         for(i in seq_along(value)){
-          action.exists <- try(operations.node[[1]]$Operation[[parm[[1]][i]]]$Action, silent = TRUE)
+          action.exists <- try(operations.node[[1]]$OperationsList[[parm[[1]][i]]]$Action, silent = TRUE)
           if(!inherits(action.exists, 'try-error')){
-            operations.node[[1]]$Operation[[parm[[1]][i]]]$Action <- value[i]      
+            operations.node[[1]]$OperationsList[[parm[[1]][i]]]$Action <- value[i]      
           }else{
             stop("Trying to edit an 'Action' item but it is not present. Add 'Date' first.", call. = FALSE)
           }
@@ -650,9 +650,9 @@ edit_apsimx <- function(file, src.dir = ".", wrt.dir = NULL,
       
       if(parm[[2]] == "Line"){
         for(i in seq_along(value)){
-          line.exists <- try(operations.node[[1]]$Operation[[parm[[1]][i]]]$Date, silent = TRUE)
+          line.exists <- try(operations.node[[1]]$OperationsList[[parm[[1]][i]]]$Date, silent = TRUE)
           if(!inherits(line.exists, 'try-error')){
-            operations.node[[1]]$Operation[[parm[[1]][i]]]$Line <- value[i]      
+            operations.node[[1]]$OperationsList[[parm[[1]][i]]]$Line <- value[i]      
           }else{
             stop("Trying to edit a 'Line' item but it is not present. Add 'Date' first.", call. = FALSE)
           }
@@ -665,7 +665,7 @@ edit_apsimx <- function(file, src.dir = ".", wrt.dir = NULL,
       
       for(i in rev(seq_along(parm[[1]]))){
         idx.rm <- abs(parm[[1]][i])
-        operations.node[[1]]$Operation[[idx.rm]] <- NULL      
+        operations.node[[1]]$OperationsList[[idx.rm]] <- NULL      
       }
     }
       
@@ -674,7 +674,7 @@ edit_apsimx <- function(file, src.dir = ".", wrt.dir = NULL,
         stop("The second 'parm' component should be either 'Date', 'Action', or 'Line'", call. = FALSE)      
     }
 
-    core.zone.node[won][[1]]$Operation <- operations.node[[1]]$Operation
+    core.zone.node[won][[1]]$OperationsList <- operations.node[[1]]$OperationsList
     parm <- unlist(parm)
   }
   
